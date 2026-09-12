@@ -2,7 +2,7 @@
    FREE INDEED — service worker
 
    ⚠️  BUMP THE CACHE NAME BELOW ON EVERY BUILD THAT CHANGES index.html.
-       fi-v1  →  fi-v2  →  fi-v3  →  ...
+       fi-v1  →  fi-v2  →  fi-v3  →  ...   (this build is fi-v2)
 
        The phone keeps its own copy of index.html so the app opens with no
        network. Until this name changes, the phone never takes the new page,
@@ -11,7 +11,7 @@
    On activate, every cache whose name is not the current one is deleted.
    ===================================================================== */
 
-var CACHE = 'fi-v1';
+var CACHE = 'fi-v2';
 var FILES = ['./', './index.html'];
 
 self.addEventListener('install', function(e){
