@@ -1,0 +1,1821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f7f6f3">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Free Indeed">
+<meta name="description" content="Free Indeed — a local-first record of money in, money out, and the gap between passive income and living costs.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='13' fill='%23fdf6e2'/%3E%3Ctext x='32' y='45' font-family='Georgia,serif' font-size='33' font-weight='bold' text-anchor='middle' fill='%237a5c0a'%3EFI%3C/text%3E%3C/svg%3E">
+<title>Free Indeed</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#f7f6f3; --card:#ffffff; --ink:#17181a; --mute:#5d6166; --faint:#8b9096;
+  --line:#e3e1db; --line2:#cfccc4;
+  --in:#0a6f38; --out:#a82318;
+  --gold:#7a5c0a; --goldbg:#fdf6e2; --goldline:#e8d9a8;
+  --pad:14px;
+}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  -webkit-text-size-adjust:100%;
+}
+#app{max-width:560px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+
+/* ---------- header ---------- */
+#top{position:sticky;top:0;z-index:30;background:var(--bg)}
+header{
+  background:var(--bg);
+  border-bottom:1px solid var(--line);
+  padding:8px var(--pad) 6px;
+}
+.hrow{display:flex;align-items:baseline;gap:8px}
+.brand{font-size:17px;font-weight:700;letter-spacing:.2px}
+.ver{font-size:11px;color:var(--faint);font-variant-numeric:tabular-nums}
+.hrow .sp{flex:1}
+.lockbtn{font-size:12px;color:var(--mute);background:none;border:1px solid var(--line2);
+  border-radius:999px;padding:3px 10px}
+
+/* ---------- the quiet corner ---------- */
+.corner{
+  background:var(--goldbg);border-bottom:1px solid var(--goldline);
+  padding:7px var(--pad);color:var(--gold);font-size:13px;line-height:1.35;cursor:pointer
+}
+.corner .ref{font-weight:700}
+.corner.clip .vt{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+
+/* ---------- screen ---------- */
+main{flex:1;padding:var(--pad) var(--pad) 4px}
+h2.sc{font-size:13px;letter-spacing:1.4px;text-transform:uppercase;color:var(--mute);
+  margin:0 0 10px;font-weight:700}
+h3{font-size:15px;margin:18px 0 8px;font-weight:700}
+p{margin:8px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px;margin:0 0 12px}
+.card.tight{padding:10px 13px}
+.note{font-size:12.5px;color:var(--mute);line-height:1.4;margin:6px 0 0}
+.note.big{font-size:13.5px}
+.kv{display:flex;align-items:baseline;gap:10px;padding:6px 0;border-bottom:1px solid var(--line)}
+.kv:last-child{border-bottom:0}
+.kv .k{flex:1;min-width:0}
+.kv .k small{display:block;color:var(--faint);font-size:11.5px}
+.kv .v{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.in{color:var(--in)} .out{color:var(--out)}
+.big{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
+.state{font-size:15px;font-weight:700;line-height:1.35;margin:4px 0 0}
+.sep{height:1px;background:var(--line);margin:12px 0}
+.empty{color:var(--mute);font-size:14px;padding:4px 0}
+
+/* ---------- controls ---------- */
+button{font:inherit;color:inherit;cursor:pointer}
+.btn{display:inline-block;background:var(--ink);color:#fff;border:0;border-radius:10px;
+  padding:11px 16px;font-size:15px;font-weight:600}
+.btn.sec{background:#fff;color:var(--ink);border:1px solid var(--line2)}
+.btn.gin{background:var(--in);color:#fff}
+.btn.gout{background:var(--out);color:#fff}
+.btn.sm{padding:7px 11px;font-size:13px;border-radius:8px}
+.btn.xs{padding:5px 9px;font-size:12px;border-radius:7px}
+.btn:disabled{opacity:.45}
+.btn.wide{display:block;width:100%;text-align:center}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row.end{justify-content:flex-end}
+label.f{display:block;font-size:12.5px;color:var(--mute);margin:10px 0 4px;font-weight:600}
+input,select,textarea{font:inherit;width:100%;background:#fff;color:var(--ink);
+  border:1px solid var(--line2);border-radius:9px;padding:10px 11px}
+textarea{min-height:110px;resize:vertical;line-height:1.45}
+input[type=number]{font-variant-numeric:tabular-nums}
+.two{display:flex;gap:8px}.two>*{flex:1;min-width:0}
+.tabs{display:flex;gap:6px;margin:0 0 12px;flex-wrap:wrap}
+.tf{border:1px solid var(--line2);background:#fff;border-radius:999px;padding:6px 13px;font-size:13px}
+.tf[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink);font-weight:700}
+.sw{display:flex;align-items:center;gap:10px}
+.sw .box{width:46px;height:27px;border-radius:999px;background:var(--line2);position:relative;flex:none;transition:background .15s}
+.sw .box b{position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:#fff;transition:left .15s}
+.sw[aria-pressed=true] .box{background:var(--in)}
+.sw[aria-pressed=true] .box b{left:22px}
+
+/* ---------- lists ---------- */
+.item{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:10px 12px;margin:0 0 8px}
+.item .top{display:flex;gap:10px;align-items:baseline}
+.item .top .t{flex:1;min-width:0;font-weight:600;overflow-wrap:anywhere}
+.item .sub{color:var(--mute);font-size:12.5px;margin-top:2px}
+.item .amt{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tag{display:inline-block;font-size:11px;padding:2px 7px;border-radius:999px;
+  border:1px solid var(--line2);color:var(--mute);background:#fbfaf7;margin-right:5px}
+.tag.warn{border-color:#d9c07a;background:#fdf6e2;color:#6b5307}
+.daylab{font-size:11.5px;letter-spacing:.7px;text-transform:uppercase;color:var(--faint);
+  font-weight:700;margin:14px 0 6px}
+.daylab:first-child{margin-top:0}
+
+/* ---------- pictures ---------- */
+.chart{width:100%;height:auto;display:block}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--mute);margin-top:6px}
+.legend i{display:inline-block;width:16px;height:3px;border-radius:2px;vertical-align:2px;margin-right:5px}
+
+/* ---------- the bottom of the app: the standing door, the tabs,
+     and the verse that never turns off ---------- */
+#bottom{position:fixed;left:0;right:0;bottom:0;z-index:25;max-width:560px;margin:0 auto;
+  background:var(--bg);border-top:1px solid var(--line)}
+.door{padding:7px var(--pad) 3px;background:var(--bg)}
+.door .btn{width:100%;text-align:center;background:#fff;color:var(--ink);border:1px solid var(--line2);font-size:14px;padding:9px}
+nav{display:flex;background:var(--bg);border-top:1px solid var(--line);padding:3px 2px 2px}
+nav button{flex:1;background:none;border:0;padding:6px 1px 5px;font-size:10.5px;color:var(--mute);
+  line-height:1.15;border-radius:8px;letter-spacing:.2px}
+nav button[aria-pressed=true]{color:var(--ink);font-weight:700}
+.foot{background:var(--goldbg);border-top:1px solid var(--goldline);
+  color:var(--gold);font-size:11.5px;line-height:1.35;padding:6px var(--pad) calc(6px + env(safe-area-inset-bottom))}
+.foot .ref{font-weight:700}
+
+/* ---------- gates ---------- */
+.gate{min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+  padding:26px var(--pad);max-width:560px;margin:0 auto}
+.gate h1{font-size:26px;margin:0 0 4px;letter-spacing:.2px}
+.gate .sub{color:var(--mute);font-size:14px;margin:0 0 18px}
+.gate .err{color:var(--out);font-size:13.5px;font-weight:600;margin:10px 0 0;min-height:18px}
+.key{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:16px;
+  letter-spacing:1.5px;line-height:1.9;background:#fff;border:1px solid var(--line2);
+  border-radius:10px;padding:12px;overflow-wrap:anywhere;text-align:center}
+.scr{background:var(--goldbg);border:1px solid var(--goldline);border-radius:11px;
+  padding:11px 13px;color:var(--gold);font-size:13.5px;line-height:1.45;margin:0 0 14px}
+.scr .ref{font-weight:700}
+.modal{position:fixed;inset:0;z-index:60;background:rgba(20,20,20,.42);
+  display:flex;align-items:flex-end;justify-content:center;padding:0}
+.modal .sheet{background:var(--bg);width:100%;max-width:560px;border-radius:16px 16px 0 0;
+  padding:16px var(--pad) calc(18px + env(safe-area-inset-bottom));max-height:92vh;overflow:auto}
+.modal h3{margin-top:0}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+<div id="gate"></div>
+
+<div id="app" class="hide">
+  <div id="top">
+    <header>
+      <div class="hrow">
+        <span class="brand">Free Indeed</span>
+        <span class="ver" id="verLabel"></span>
+        <span class="sp"></span>
+        <button class="lockbtn" id="lockNow">Lock</button>
+      </div>
+    </header>
+    <div class="corner clip hide" id="corner">
+      <span class="ref" id="cornerRef"></span>
+      <span class="vt" id="cornerText"></span>
+    </div>
+  </div>
+
+  <main id="screen"></main>
+
+  <div id="bottom">
+    <div class="door hide" id="door">
+      <button class="btn" id="doorBtn">Write to GOD</button>
+    </div>
+    <nav id="nav"></nav>
+    <div class="foot">
+      <span class="ref">John 8:36</span>
+      If the Son therefore shall make you free, ye shall be free indeed.
+    </div>
+  </div>
+</div>
+
+<div id="modal"></div>
+
+<script>
+"use strict";
+/* ============================================================
+   FREE INDEED  —  v0.1.0 BUILD1
+   SpiritWrought Ltd.  Local only. No network, no server, no account.
+   Two files: index.html (this) and sw.js beside it.
+   ============================================================ */
+
+var APP_VERSION = "0.1.0 BUILD1";
+var CUR = "₦";                 /* naira */
+var VKEY = "fi.vault.v1";           /* the only thing written to the device */
+var KDF_ITER = 210000;
+
+/* ---------- the daily set: money, provision, stewardship, contentment ----------
+   Never chosen from his numbers. The verse at the bottom of the app is a
+   different verse and never turns off. */
+var VERSES = [
+ ["Matthew 6:21","For where your treasure is, there will your heart be also."],
+ ["Matthew 6:24","No man can serve two masters... Ye cannot serve God and mammon."],
+ ["Matthew 6:33","But seek ye first the kingdom of God, and his righteousness; and all these things shall be added unto you."],
+ ["Matthew 6:26","Behold the fowls of the air: for they sow not, neither do they reap, nor gather into barns; yet your heavenly Father feedeth them. Are ye not much better than they?"],
+ ["Philippians 4:19","But my God shall supply all your need according to his riches in glory by Christ Jesus."],
+ ["Philippians 4:11","...I have learned, in whatsoever state I am, therewith to be content."],
+ ["1 Timothy 6:6","But godliness with contentment is great gain."],
+ ["1 Timothy 6:10","For the love of money is the root of all evil..."],
+ ["1 Timothy 6:17","...that they be not highminded, nor trust in uncertain riches, but in the living God, who giveth us richly all things to enjoy."],
+ ["Proverbs 3:9","Honour the LORD with thy substance, and with the firstfruits of all thine increase."],
+ ["Proverbs 13:11","Wealth gotten by vanity shall be diminished: but he that gathereth by labour shall increase."],
+ ["Proverbs 21:5","The thoughts of the diligent tend only to plenteousness; but of every one that is hasty only to want."],
+ ["Proverbs 21:20","There is treasure to be desired and oil in the dwelling of the wise: but a foolish man spendeth it up."],
+ ["Proverbs 22:7","The rich ruleth over the poor, and the borrower is servant to the lender."],
+ ["Proverbs 27:23","Be thou diligent to know the state of thy flocks, and look well to thy herds."],
+ ["Proverbs 11:24","There is that scattereth, and yet increaseth; and there is that withholdeth more than is meet, but it tendeth to poverty."],
+ ["Proverbs 11:25","The liberal soul shall be made fat: and he that watereth shall be watered also himself."],
+ ["Proverbs 10:22","The blessing of the LORD, it maketh rich; and he addeth no sorrow with it."],
+ ["Proverbs 30:8","...give me neither poverty nor riches; feed me with food convenient for me."],
+ ["Deuteronomy 8:18","But thou shalt remember the LORD thy God: for it is he that giveth thee power to get wealth."],
+ ["1 Chronicles 29:14","...for all things come of thee, and of thine own have we given thee."],
+ ["Psalm 24:1","The earth is the LORD'S, and the fulness thereof; the world, and they that dwell therein."],
+ ["Psalm 23:1","The LORD is my shepherd; I shall not want."],
+ ["Psalm 34:10","...they that seek the LORD shall not want any good thing."],
+ ["Psalm 37:25","I have been young, and now am old; yet have I not seen the righteous forsaken, nor his seed begging bread."],
+ ["Psalm 112:5","A good man sheweth favour, and lendeth: he will guide his affairs with discretion."],
+ ["Luke 12:15","...Take heed, and beware of covetousness: for a man's life consisteth not in the abundance of the things which he possesseth."],
+ ["Luke 16:10","He that is faithful in that which is least is faithful also in much..."],
+ ["Luke 14:28","For which of you, intending to build a tower, sitteth not down first, and counteth the cost...?"],
+ ["2 Corinthians 9:7","...for God loveth a cheerful giver."],
+ ["2 Corinthians 9:8","And God is able to make all grace abound toward you; that ye, always having all sufficiency in all things, may abound to every good work."],
+ ["Hebrews 13:5","Let your conversation be without covetousness; and be content with such things as ye have..."],
+ ["Malachi 3:10","Bring ye all the tithes into the storehouse, that there may be meat in mine house..."],
+ ["Ecclesiastes 5:10","He that loveth silver shall not be satisfied with silver; nor he that loveth abundance with increase..."],
+ ["James 1:17","Every good gift and every perfect gift is from above, and cometh down from the Father of lights..."],
+ ["Haggai 2:8","The silver is mine, and the gold is mine, saith the LORD of hosts."]
+];
+
+/* ---------- small helpers ---------- */
+function $(id){ return document.getElementById(id); }
+function esc(s){
+  return String(s===null||s===undefined?"":s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+function nf(n){
+  var neg = n < 0; n = Math.abs(n);
+  var s = (Math.round(n*100)/100).toLocaleString("en-US",{maximumFractionDigits:2});
+  return (neg?"-":"") + CUR + s;
+}
+function nf0(n){
+  var neg = n < 0; n = Math.abs(n);
+  var s = Math.round(n).toLocaleString("en-US");
+  return (neg?"-":"") + CUR + s;
+}
+function pad2(n){ return n<10 ? "0"+n : ""+n; }
+function isoOf(d){ return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate()); }
+function todayISO(){ return isoOf(new Date()); }
+function fromISO(s){ var p=String(s).split("-"); return new Date(+p[0], +p[1]-1, +p[2]); }
+var MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function niceDate(iso){
+  if(!iso) return "no date";
+  var d = fromISO(iso);
+  return d.getDate()+" "+MON[d.getMonth()]+" "+d.getFullYear();
+}
+function shortDate(iso){ var d=fromISO(iso); return d.getDate()+" "+MON[d.getMonth()]; }
+
+/* ---------- cycles ---------- */
+var PER_DAY  = { daily:1, weekly:1/7, monthly:1/30.4375, yearly:1/365.25 };
+var UNIT_DAYS = { day:1, week:7, month:30.4375, year:365.25 };
+var UNIT_WORD = { day:"a day", week:"a week", month:"a month", year:"a year" };
+var CYCLE_WORD = { daily:"daily", weekly:"weekly", monthly:"monthly", yearly:"yearly" };
+function perUnit(amount, cycle, unit){
+  return (+amount || 0) * (PER_DAY[cycle]||PER_DAY.monthly) * (UNIT_DAYS[unit]||UNIT_DAYS.month);
+}
+
+/* ============================================================
+   THE LOCK — real encryption, on the device, with nothing sent anywhere.
+   A random data key holds the app. That key is wrapped twice:
+   once by the PIN, once by the recovery key. Lose both and it is gone.
+   ============================================================ */
+var TE = new TextEncoder(), TD = new TextDecoder();
+function rnd(n){ var a = new Uint8Array(n); crypto.getRandomValues(a); return a; }
+function b64(u8){ var s=""; for(var i=0;i<u8.length;i++) s+=String.fromCharCode(u8[i]); return btoa(s); }
+function unb64(s){ var r=atob(s), a=new Uint8Array(r.length); for(var i=0;i<r.length;i++) a[i]=r.charCodeAt(i); return a; }
+
+var B32 = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
+function toKey(u8){
+  var bits=0, val=0, out="";
+  for(var i=0;i<u8.length;i++){
+    val = (val<<8) | u8[i]; bits += 8;
+    while(bits >= 5){ out += B32[(val >>> (bits-5)) & 31]; bits -= 5; }
+  }
+  if(bits>0) out += B32[(val << (5-bits)) & 31];
+  var g=[]; for(var j=0;j<out.length;j+=4) g.push(out.slice(j,j+4));
+  return g.join("-");
+}
+function normKey(s){
+  return String(s).toUpperCase().replace(/[^0-9A-Z]/g,"")
+    .replace(/O/g,"0").replace(/[IL]/g,"1").replace(/U/g,"V");
+}
+async function kek(secret, salt){
+  var base = await crypto.subtle.importKey("raw", TE.encode(secret), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey(
+    { name:"PBKDF2", salt:salt, iterations:KDF_ITER, hash:"SHA-256" },
+    base, { name:"AES-GCM", length:256 }, false, ["encrypt","decrypt"]);
+}
+async function newDek(){
+  return crypto.subtle.generateKey({name:"AES-GCM",length:256}, true, ["encrypt","decrypt"]);
+}
+async function wrapDek(dek, secret){
+  var salt = rnd(16), iv = rnd(12);
+  var raw = new Uint8Array(await crypto.subtle.exportKey("raw", dek));
+  var ct = new Uint8Array(await crypto.subtle.encrypt({name:"AES-GCM",iv:iv}, await kek(secret,salt), raw));
+  return { salt:b64(salt), iv:b64(iv), ct:b64(ct) };
+}
+async function unwrapDek(w, secret){
+  var raw = await crypto.subtle.decrypt(
+    {name:"AES-GCM", iv:unb64(w.iv)}, await kek(secret, unb64(w.salt)), unb64(w.ct));
+  return crypto.subtle.importKey("raw", raw, {name:"AES-GCM"}, true, ["encrypt","decrypt"]);
+}
+async function seal(dek, obj){
+  var iv = rnd(12);
+  var ct = new Uint8Array(await crypto.subtle.encrypt(
+    {name:"AES-GCM",iv:iv}, dek, TE.encode(JSON.stringify(obj))));
+  return { iv:b64(iv), ct:b64(ct) };
+}
+async function unseal(dek, d){
+  var p = await crypto.subtle.decrypt({name:"AES-GCM", iv:unb64(d.iv)}, dek, unb64(d.ct));
+  return JSON.parse(TD.decode(p));
+}
+
+/* ============================================================
+   THE STATE — everything the app holds. Encrypted whenever it is written.
+   ============================================================ */
+var DEK = null;      /* held in memory only, for as long as the app is open */
+var S = null;        /* the decrypted state */
+var scr = "gap";     /* which screen is showing */
+
+function blank(){
+  return {
+    built: APP_VERSION,
+    faith: true,                 /* Talking with GOD — on when first opened */
+    unit: "month",               /* the one timeframe control */
+    visions: [],                 /* dated entries. Only the current one is shown */
+    legacies: [],
+    active: [], costs: [], giving: [], passive: [],   /* estimates */
+    entries: [],
+    rooms: [
+      { id:uid(), name:"Bathroom",    items:[] },
+      { id:uid(), name:"Kitchen",     items:[] },
+      { id:uid(), name:"Living room", items:[] }
+    ],
+    pending: [],
+    letters: [],
+    threads: [],
+    verse: null,
+    seenNarrow: false
+  };
+}
+
+function vault(){
+  try { var r = localStorage.getItem(VKEY); return r ? JSON.parse(r) : null; }
+  catch(e){ return null; }
+}
+function putVault(v){ localStorage.setItem(VKEY, JSON.stringify(v)); }
+
+var saving = false, again = false;
+async function save(){
+  if(!DEK || !S) return;
+  if(saving){ again = true; return; }
+  saving = true;
+  try{
+    var v = vault(); if(!v) return;
+    v.data = await seal(DEK, S);
+    v.built = APP_VERSION;
+    putVault(v);
+  } catch(e){ console.error("save failed", e); }
+  saving = false;
+  if(again){ again = false; await save(); }
+}
+
+/* ---------- estimates carry their own dated changes, so a line can move
+     over time and the past is never rewritten ---------- */
+function mkItem(name, amount, cycle, tier){
+  return { id:uid(), name:name, tier:tier||null,
+           changes:[{ date:todayISO(), amount:+amount||0, cycle:cycle||"monthly" }] };
+}
+function cur(it){ return it.changes[it.changes.length-1]; }
+function setItem(it, amount, cycle){
+  var c = cur(it), t = todayISO();
+  if(c.date === t){ c.amount = +amount||0; c.cycle = cycle; }
+  else it.changes.push({ date:t, amount:+amount||0, cycle:cycle });
+}
+function valueAt(it, iso){
+  var pick = null;
+  for(var i=0;i<it.changes.length;i++){
+    if(it.changes[i].date <= iso) pick = it.changes[i]; else break;
+  }
+  return pick;
+}
+function sumAt(list, iso, unit){
+  var t = 0;
+  for(var i=0;i<list.length;i++){
+    var c = valueAt(list[i], iso);
+    if(c) t += perUnit(c.amount, c.cycle, unit);
+  }
+  return t;
+}
+function sumNow(list, unit){ return sumAt(list, todayISO(), unit); }
+/* nothing set out yet at that date reads as nothing known, never as zero */
+function sumAtOrNull(list, iso, unit){
+  var t = 0, any = false;
+  for(var i=0;i<list.length;i++){
+    var c = valueAt(list[i], iso);
+    if(c){ any = true; t += perUnit(c.amount, c.cycle, unit); }
+  }
+  return any ? t : null;
+}
+function hasEstimates(){
+  return S.active.length + S.costs.length + S.giving.length + S.passive.length > 0;
+}
+
+/* ---------- the daily verse ---------- */
+function dailyVerse(){
+  var t = todayISO();
+  if(!S.verse || S.verse.date !== t){
+    var seed = 0; for(var i=0;i<t.length;i++) seed = (seed*33 + t.charCodeAt(i)) % 100003;
+    seed = (seed * 7919 + 104729) % 100003;
+    S.verse = { date:t, i: seed % VERSES.length };
+    save();
+  }
+  return VERSES[S.verse.i % VERSES.length];
+}
+
+/* ============================================================
+   HANDING A FILE OUT — the phone's own Share menu where it is there,
+   a plain save where it is not. No button is shown that does nothing.
+   ============================================================ */
+function canShareFiles(){
+  try{
+    if(!navigator.share || !navigator.canShare) return false;
+    return navigator.canShare({ files:[ new File(["x"],"x.txt",{type:"text/plain"}) ] });
+  }catch(e){ return false; }
+}
+async function handOut(name, text, mime){
+  var f = new File([text], name, { type: mime || "text/plain" });
+  if(canShareFiles()){
+    try{ await navigator.share({ files:[f], title:name }); return "shared"; }
+    catch(e){ if(e && (e.name==="AbortError"||e.name==="NotAllowedError")) return "cancelled"; }
+  }
+  try{
+    var url = URL.createObjectURL(f);
+    var a = document.createElement("a");
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 5000);
+    return "saved";
+  }catch(e){ return "failed"; }
+}
+function handOutWord(){ return canShareFiles() ? "Send it through Share" : "Save the file"; }
+
+/* ============================================================
+   THE GATES
+   ============================================================ */
+var G = $("gate");
+function showGate(html){
+  $("app").classList.add("hide");
+  G.classList.remove("hide");
+  G.innerHTML = html;
+}
+function enterApp(){
+  G.classList.add("hide"); G.innerHTML = "";
+  $("app").classList.remove("hide");
+  paint();
+}
+
+function noCrypto(){
+  showGate('<div class="gate"><h1>Free Indeed</h1>'+
+   '<p class="sub">This page has to be opened over https for the lock to work. '+
+   'Opened straight from a file, the phone keeps the encryption switched off.</p>'+
+   '<p class="note big">Upload both files to GitHub Pages and open the app from that web address.</p></div>');
+}
+
+/* ---------- 1. set the PIN ---------- */
+function gateSetPin(){
+  showGate('<div class="gate">'+
+    '<h1>Free Indeed</h1>'+
+    '<p class="sub">A record of money in, money out, and the gap between what arrives whether or not you moved and what it costs you to live.</p>'+
+    '<div class="scr"><span class="ref">1 Chronicles 29:14</span> '+
+      'All things come of thee, and of thine own have we given thee.</div>'+
+    '<p class="note big">Everything you write is locked with a word or phrase of your own, on this phone. '+
+      'Nothing is sent anywhere. There is no account and no server, so nobody can open it for you.</p>'+
+    '<label class="f">A word or phrase, six characters or more</label>'+
+    '<input id="p1" type="password" autocomplete="new-password" inputmode="text">'+
+    '<label class="f">The same again</label>'+
+    '<input id="p2" type="password" autocomplete="new-password" inputmode="text">'+
+    '<div class="err" id="perr"></div>'+
+    '<div class="row" style="margin-top:14px"><button class="btn" id="pgo">Set it</button></div>'+
+    '<div class="sep"></div>'+
+    '<p class="note">Moving from another phone? <button class="btn sec sm" id="prestore">Restore a backup file</button></p>'+
+    '<input id="pfile" type="file" accept=".fibackup,application/json,.json,.txt" class="hide">'+
+  '</div>');
+
+  $("pgo").onclick = async function(){
+    var a = $("p1").value, b = $("p2").value, e = $("perr");
+    if(a.length < 6){ e.textContent = "Six characters or more."; return; }
+    if(a !== b){ e.textContent = "The two do not match."; return; }
+    e.textContent = "Locking...";
+    this.disabled = true;
+    try{
+      var dek = await newDek();
+      var rkBytes = rnd(20), rk = toKey(rkBytes);
+      var v = { app:"Free Indeed", v:1, built:APP_VERSION,
+                pin: await wrapDek(dek, a),
+                rec: await wrapDek(dek, normKey(rk)),
+                data: null };
+      gateRecovery(v, dek, rk);
+    }catch(err){ e.textContent = "The lock did not set. " + (err && err.message ? err.message : ""); this.disabled = false; }
+  };
+  $("prestore").onclick = function(){ $("pfile").click(); };
+  $("pfile").onchange = function(){ readBackupFile(this.files && this.files[0]); };
+}
+
+/* ---------- 2. the recovery key, saved once before setup goes on ---------- */
+function gateRecovery(v, dek, rk){
+  showGate('<div class="gate">'+
+    '<h1>Your recovery key</h1>'+
+    '<p class="sub">This is the only other thing that opens your record. Save it once, now.</p>'+
+    '<div class="key" id="kbox">'+esc(rk)+'</div>'+
+    '<p class="note big">Send it to yourself and keep it somewhere you already keep things. '+
+      'Forget your word or phrase and this key opens the app. Lose both and the record is gone, '+
+      'which is the cost of nobody else holding your finances.</p>'+
+    '<div class="row" style="margin-top:14px">'+
+      '<button class="btn" id="ksave">'+esc(handOutWord())+'</button>'+
+      '<button class="btn sec" id="kcopy">Copy</button>'+
+    '</div>'+
+    '<div class="err" id="kerr"></div>'+
+    '<div class="sep"></div>'+
+    '<button class="btn wide" id="kgo" disabled>Continue</button>'+
+    '<p class="note" id="knote">Continue opens once the key is saved.</p>'+
+  '</div>');
+
+  var done = false;
+  function mark(msg){
+    done = true; $("kgo").disabled = false;
+    $("knote").textContent = msg;
+  }
+  $("ksave").onclick = async function(){
+    var r = await handOut("FreeIndeed-recovery-key.txt",
+      "FREE INDEED — RECOVERY KEY\n\n" + rk +
+      "\n\nKeep this. It opens your record if you forget your word or phrase.\n" +
+      "Saved " + niceDate(todayISO()) + ".\n", "text/plain");
+    if(r === "shared") mark("Key sent. Continue is open.");
+    else if(r === "saved") mark("Key saved to this device. Continue is open.");
+    else if(r === "cancelled") $("kerr").textContent = "Nothing was sent. Try again.";
+    else $("kerr").textContent = "The file did not save. Copy the key instead.";
+  };
+  $("kcopy").onclick = async function(){
+    try{
+      if(navigator.clipboard && navigator.clipboard.writeText) await navigator.clipboard.writeText(rk);
+      else { var t=document.createElement("textarea"); t.value=rk; document.body.appendChild(t);
+             t.select(); document.execCommand("copy"); t.remove(); }
+      mark("Key copied. Paste it somewhere safe. Continue is open.");
+    }catch(e){ $("kerr").textContent = "Copy did not work. Write the key down."; }
+  };
+  $("kgo").onclick = async function(){
+    if(!done) return;
+    this.disabled = true;
+    DEK = dek; S = blank();
+    putVault(v);
+    await save();
+    scr = "welcome";
+    enterApp();
+  };
+}
+
+/* ---------- 3. unlock ---------- */
+function gateUnlock(){
+  showGate('<div class="gate">'+
+    '<h1>Free Indeed</h1>'+
+    '<p class="sub">Your word or phrase.</p>'+
+    '<input id="u1" type="password" autocomplete="current-password">'+
+    '<div class="err" id="uerr"></div>'+
+    '<div class="row" style="margin-top:14px"><button class="btn" id="ugo">Unlock</button></div>'+
+    '<div class="sep"></div>'+
+    '<p class="note">Forgotten it? <button class="btn sec sm" id="urec">Use my recovery key</button></p>'+
+  '</div>');
+  $("u1").onkeydown = function(e){ if(e.key === "Enter") $("ugo").click(); };
+  $("ugo").onclick = async function(){
+    var e = $("uerr"); e.textContent = "Opening...";
+    this.disabled = true;
+    var v = vault();
+    try{
+      DEK = await unwrapDek(v.pin, $("u1").value);
+      S = v.data ? await unseal(DEK, v.data) : blank();
+      fixState();
+      scr = S.visions.length || hasEstimates() || S.entries.length ? "gap" : "welcome";
+      enterApp();
+    }catch(err){
+      DEK = null; e.textContent = "That does not open it."; this.disabled = false;
+    }
+  };
+  $("urec").onclick = gateRecUnlock;
+}
+
+function gateRecUnlock(){
+  showGate('<div class="gate">'+
+    '<h1>Recovery key</h1>'+
+    '<p class="sub">The key you saved when you first set this up.</p>'+
+    '<input id="r1" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="XXXX-XXXX-XXXX-XXXX">'+
+    '<div class="err" id="rerr"></div>'+
+    '<div class="row" style="margin-top:14px"><button class="btn" id="rgo">Open it</button>'+
+    '<button class="btn sec" id="rback">Back</button></div>'+
+  '</div>');
+  $("rback").onclick = gateUnlock;
+  $("rgo").onclick = async function(){
+    var e = $("rerr"); e.textContent = "Opening...";
+    this.disabled = true;
+    var v = vault();
+    try{
+      DEK = await unwrapDek(v.rec, normKey($("r1").value));
+      S = v.data ? await unseal(DEK, v.data) : blank();
+      fixState();
+      gateNewPin();
+    }catch(err){
+      DEK = null; e.textContent = "That key does not open it."; this.disabled = false;
+    }
+  };
+}
+
+/* after a recovery-key entry, a new word or phrase is set */
+function gateNewPin(){
+  showGate('<div class="gate">'+
+    '<h1>A new word or phrase</h1>'+
+    '<p class="sub">Your record is open. Set the word or phrase you will use from now on.</p>'+
+    '<label class="f">Six characters or more</label>'+
+    '<input id="n1" type="password" autocomplete="new-password">'+
+    '<label class="f">The same again</label>'+
+    '<input id="n2" type="password" autocomplete="new-password">'+
+    '<div class="err" id="nerr"></div>'+
+    '<div class="row" style="margin-top:14px"><button class="btn" id="ngo">Set it</button></div>'+
+    '<p class="note">Your recovery key does not change.</p>'+
+  '</div>');
+  $("ngo").onclick = async function(){
+    var a = $("n1").value, b = $("n2").value, e = $("nerr");
+    if(a.length < 6){ e.textContent = "Six characters or more."; return; }
+    if(a !== b){ e.textContent = "The two do not match."; return; }
+    this.disabled = true;
+    var v = vault();
+    v.pin = await wrapDek(DEK, a);
+    putVault(v);
+    await save();
+    scr = "gap";
+    enterApp();
+  };
+}
+
+/* ---------- restore a backup file at the gate ---------- */
+function readBackupFile(file){
+  if(!file) return;
+  var fr = new FileReader();
+  fr.onload = function(){
+    var v;
+    try{ v = JSON.parse(String(fr.result)); }catch(e){ v = null; }
+    if(!v || v.app !== "Free Indeed" || !v.pin || !v.rec){
+      var e1 = $("perr") || $("mrestoreerr");
+      if(e1) e1.textContent = "That is not a Free Indeed backup file.";
+      return;
+    }
+    putVault(v);
+    gateUnlock();
+  };
+  fr.readAsText(file);
+}
+
+/* ---------- older records keep working ---------- */
+function fixState(){
+  var b = blank();
+  for(var k in b){ if(!(k in S)) S[k] = b[k]; }
+  if(!Array.isArray(S.rooms)) S.rooms = b.rooms;
+  if(!Array.isArray(S.entries)) S.entries = [];
+}
+
+/* ============================================================
+   THE PICTURE — a compact line graph above, bars beneath,
+   one timeframe control governing both. Solid lines only.
+   Active income is never drawn here.
+   ============================================================ */
+function shortMoney(n){
+  var a = Math.abs(n);
+  if(a >= 1e9) return CUR + (Math.round(n/1e8)/10) + "b";
+  if(a >= 1e6) return CUR + (Math.round(n/1e5)/10) + "m";
+  if(a >= 1e3) return CUR + (Math.round(n/100)/10) + "k";
+  return CUR + Math.round(n);
+}
+function slices(unit){
+  var out = [], i, d = new Date(); d.setHours(0,0,0,0);
+  if(unit === "day"){
+    for(i=13;i>=0;i--){ var a=new Date(d); a.setDate(d.getDate()-i);
+      out.push({ s:isoOf(a), e:isoOf(a), lab:String(a.getDate()) }); }
+  } else if(unit === "week"){
+    var mon = new Date(d); mon.setDate(d.getDate() - ((d.getDay()+6)%7));
+    for(i=11;i>=0;i--){ var w=new Date(mon); w.setDate(mon.getDate()-i*7);
+      var we=new Date(w); we.setDate(w.getDate()+6);
+      out.push({ s:isoOf(w), e:isoOf(we), lab:w.getDate()+" "+MON[w.getMonth()] }); }
+  } else if(unit === "month"){
+    for(i=11;i>=0;i--){
+      var m1 = new Date(d.getFullYear(), d.getMonth()-i, 1);
+      var m2 = new Date(d.getFullYear(), d.getMonth()-i+1, 0);
+      out.push({ s:isoOf(m1), e:isoOf(m2), lab:MON[m1.getMonth()] });
+    }
+  } else {
+    for(i=4;i>=0;i--){ var y = d.getFullYear()-i;
+      out.push({ s:y+"-01-01", e:y+"-12-31", lab:String(y) }); }
+  }
+  return out;
+}
+function clampToday(iso){ var t = todayISO(); return iso > t ? t : iso; }
+
+function outInSlice(sl){
+  var t = 0;
+  for(var i=0;i<S.entries.length;i++){
+    var x = S.entries[i];
+    if(x.dir !== "out" || x.giving || x.unreadable || !x.date) continue;
+    if(x.date >= sl.s && x.date <= sl.e) t += (+x.amount || 0);
+  }
+  return t;
+}
+
+function svgLines(sl, A, B){
+  var W = 320, H = 128, L = 40, R = 8, T = 12, Bm = 20, i;
+  var all = A.concat(B), max = 0;
+  for(i=0;i<all.length;i++) if(all[i] !== null && all[i] > max) max = all[i];
+  if(max <= 0) max = 1;
+  max = max * 1.18;
+  var iw = W - L - R, ih = H - T - Bm;
+  var n = sl.length;
+  function X(k){ return n <= 1 ? L + iw/2 : L + (iw * k / (n-1)); }
+  function Y(v){ return T + ih - (ih * (v / max)); }
+  /* a period with nothing set out is a gap in the line, never a zero */
+  function poly(arr){
+    var p = [];
+    for(var k=0;k<arr.length;k++) if(arr[k] !== null) p.push(X(k).toFixed(1)+","+Y(arr[k]).toFixed(1));
+    return p.join(" ");
+  }
+  function lastOf(arr){ for(var k=arr.length-1;k>=0;k--) if(arr[k] !== null) return k; return -1; }
+  var s = '<svg class="chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Passive income and living costs over time">';
+  s += '<line x1="'+L+'" y1="'+(T+ih)+'" x2="'+(W-R)+'" y2="'+(T+ih)+'" stroke="#cfccc4" stroke-width="1"/>';
+  s += '<line x1="'+L+'" y1="'+T+'" x2="'+(W-R)+'" y2="'+T+'" stroke="#eceae4" stroke-width="1"/>';
+  s += '<line x1="'+L+'" y1="'+(T+ih/2)+'" x2="'+(W-R)+'" y2="'+(T+ih/2)+'" stroke="#eceae4" stroke-width="1"/>';
+  s += '<text x="'+(L-4)+'" y="'+(T+4)+'" text-anchor="end" font-size="8" fill="#8b9096">'+esc(shortMoney(max))+'</text>';
+  s += '<text x="'+(L-4)+'" y="'+(T+ih)+'" text-anchor="end" font-size="8" fill="#8b9096">0</text>';
+  s += '<polyline fill="none" stroke="#a82318" stroke-width="2" stroke-linejoin="round" points="'+poly(B)+'"/>';
+  s += '<polyline fill="none" stroke="#0a6f38" stroke-width="2" stroke-linejoin="round" points="'+poly(A)+'"/>';
+  var lb = lastOf(B), la = lastOf(A);
+  if(lb >= 0) s += '<circle cx="'+X(lb).toFixed(1)+'" cy="'+Y(B[lb]).toFixed(1)+'" r="2.8" fill="#a82318"/>';
+  if(la >= 0) s += '<circle cx="'+X(la).toFixed(1)+'" cy="'+Y(A[la]).toFixed(1)+'" r="2.8" fill="#0a6f38"/>';
+  s += '<text x="'+L+'" y="'+(H-6)+'" font-size="8" fill="#8b9096">'+esc(sl[0].lab)+'</text>';
+  s += '<text x="'+(W-R)+'" y="'+(H-6)+'" text-anchor="end" font-size="8" fill="#8b9096">'+esc(sl[n-1].lab)+'</text>';
+  s += '</svg>';
+  return s;
+}
+
+function svgBars(sl, vals, marks){
+  var W = 320, H = 132, L = 40, R = 8, T = 10, Bm = 22;
+  var max = 0, i;
+  for(i=0;i<vals.length;i++) if(vals[i] > max) max = vals[i];
+  for(i=0;i<marks.length;i++) if(marks[i] !== null && marks[i] > max) max = marks[i];
+  if(max <= 0) max = 1;
+  max = max * 1.18;
+  var iw = W - L - R, ih = H - T - Bm, n = sl.length;
+  var step = iw / n, bw = Math.max(4, step * 0.62);
+  function Y(v){ return T + ih - (ih * (v/max)); }
+  var s = '<svg class="chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Money out recorded, with your estimate marked on each bar">';
+  s += '<line x1="'+L+'" y1="'+(T+ih)+'" x2="'+(W-R)+'" y2="'+(T+ih)+'" stroke="#cfccc4" stroke-width="1"/>';
+  s += '<text x="'+(L-4)+'" y="'+(T+4)+'" text-anchor="end" font-size="8" fill="#8b9096">'+esc(shortMoney(max))+'</text>';
+  for(i=0;i<n;i++){
+    var cx = L + step*i + step/2, x = cx - bw/2;
+    var y = Y(vals[i]), h = Math.max(0, (T+ih) - y);
+    s += '<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+'" fill="#a82318" opacity="0.85" rx="1"/>';
+    if(marks[i] !== null && marks[i] > 0){
+      var my = Y(marks[i]);
+      s += '<line x1="'+(x-2).toFixed(1)+'" y1="'+my.toFixed(1)+'" x2="'+(x+bw+2).toFixed(1)+'" y2="'+my.toFixed(1)+'" stroke="#17181a" stroke-width="1.6"/>';
+    }
+    if(n <= 14 || i === 0 || i === n-1)
+      s += '<text x="'+cx.toFixed(1)+'" y="'+(H-8)+'" text-anchor="middle" font-size="7.5" fill="#8b9096">'+esc(sl[i].lab)+'</text>';
+  }
+  s += '</svg>';
+  return s;
+}
+
+function undatedCount(){
+  var c = 0;
+  for(var i=0;i<S.entries.length;i++) if(!S.entries[i].date) c++;
+  return c;
+}
+
+function tfControl(){
+  var u = ["day","week","month","year"], s = '<div class="tabs">';
+  for(var i=0;i<u.length;i++)
+    s += '<button class="tf" data-a="unit" data-v="'+u[i]+'" aria-pressed="'+(S.unit===u[i])+'">'+u[i]+'</button>';
+  return s + '</div>';
+}
+
+/* ============================================================
+   THE SHELL
+   ============================================================ */
+var TABS = [
+  { k:"gap",      t:"Gap" },
+  { k:"picture",  t:"Picture" },
+  { k:"ledger",   t:"Ledger" },
+  { k:"cupboard", t:"Cupboard" },
+  { k:"god",      t:"GOD", faith:true },
+  { k:"more",     t:"More" }
+];
+
+function paint(){
+  $("verLabel").textContent = "v" + APP_VERSION;
+  /* the quiet corner — a different verse from the one at the bottom */
+  var c = $("corner");
+  if(S.faith){
+    var v = dailyVerse();
+    $("cornerRef").textContent = v[0] + " ";
+    $("cornerText").textContent = v[1];
+    c.classList.remove("hide");
+  } else c.classList.add("hide");
+  /* the standing door — always on the screen, never a popup */
+  $("door").classList.toggle("hide", !S.faith);
+  /* the tabs */
+  var nv = "";
+  for(var i=0;i<TABS.length;i++){
+    var T = TABS[i];
+    if(T.faith && !S.faith) continue;
+    nv += '<button data-t="'+T.k+'" aria-pressed="'+(scr===T.k)+'">'+esc(T.t)+'</button>';
+  }
+  $("nav").innerHTML = nv;
+  render();
+  fitBottom();
+}
+/* keep the screen clear of the fixed bottom */
+function fitBottom(){
+  var b = $("bottom");
+  if(b) $("screen").style.paddingBottom = (b.offsetHeight + 14) + "px";
+}
+window.addEventListener("resize", fitBottom);
+function go(k){ scr = k; paint(); window.scrollTo(0,0); }
+
+function render(){
+  var m = $("screen");
+  if(scr === "welcome")       m.innerHTML = scWelcome();
+  else if(scr === "gap")      m.innerHTML = scGap();
+  else if(scr === "picture")  m.innerHTML = scPicture();
+  else if(scr === "ledger")   m.innerHTML = scLedger();
+  else if(scr === "paste")    m.innerHTML = scPaste();
+  else if(scr === "cupboard") m.innerHTML = scCupboard();
+  else if(scr === "god")      m.innerHTML = scGod();
+  else if(scr === "setup")    m.innerHTML = scSetup();
+  else if(scr === "more")     m.innerHTML = scMore();
+  else                        m.innerHTML = scGap();
+}
+
+/* ============================================================
+   THE WELCOME — the stewardship notice is read. The vision and the
+   legacy are open spaces. Nothing here is demanded and nothing counts them.
+   ============================================================ */
+function latest(list){ return list.length ? list[list.length-1] : null; }
+
+function scWelcome(){
+  var v = latest(S.visions), l = latest(S.legacies);
+  var s = '<h2 class="sc">The welcome</h2>';
+
+  s += '<div class="scr"><span class="ref">1 Chronicles 29:14</span> '+
+       'All things come of thee, and of thine own have we given thee.</div>';
+  s += '<div class="card"><p style="margin-top:0">All things come of God. '+
+       'What passes through your hands came from Him, and it is His still. '+
+       'This app keeps the record of it.</p>'+
+       '<p class="note">Deuteronomy 8:18 — it is he that giveth thee power to get wealth.</p></div>';
+
+  s += '<h3>The vision</h3>';
+  s += '<div class="card">';
+  if(v) s += '<p style="margin-top:0;white-space:pre-wrap">'+esc(v.text)+'</p>'+
+             '<p class="note">Written '+esc(niceDate(v.date))+'</p>';
+  else  s += '<p class="note big" style="margin-top:0">What financial freedom means to you, in your own words. '+
+             'This space stays open.</p>';
+  s += '<div class="row end" style="margin-top:10px">'+
+       '<button class="btn sec sm" data-a="vision">'+(v?"Write a new one":"Write")+'</button></div></div>';
+
+  s += '<h3>The legacy</h3>';
+  s += '<div class="card">';
+  if(l) s += '<p style="margin-top:0;white-space:pre-wrap">'+esc(l.text)+'</p>'+
+             '<p class="note">Written '+esc(niceDate(l.date))+'</p>';
+  else  s += '<p class="note big" style="margin-top:0">What you want your freedom to make possible — '+
+             'now, and after you. This space stays open.</p>';
+  s += '<div class="row end" style="margin-top:10px">'+
+       '<button class="btn sec sm" data-a="legacy">'+(l?"Write a new one":"Write")+'</button></div></div>';
+
+  s += '<div class="card tight"><p class="note big" style="margin:0">Talking with GOD is on. '+
+       'It can be set aside at any time under More.</p></div>';
+
+  if(!hasEstimates()){
+    s += '<h3>Two ways in</h3>';
+    s += '<div class="card"><p style="margin-top:0">Set out your estimates — active income, living costs, '+
+         'giving, passive income — and the gap, the graph and Seed for Freedom all read from them.</p>'+
+         '<button class="btn wide" data-a="tab" data-v="setup">Set out my estimates</button>'+
+         '<div class="sep"></div>'+
+         '<p style="margin-top:0">Or record money in and money out, nothing else. The app works from today at that level.</p>'+
+         '<p class="note">With no estimates set out there is no gap reading and no Seed for Freedom figure. '+
+         'The ledger and the cupboard work the same either way.</p>'+
+         '<button class="btn sec wide" data-a="tab" data-v="ledger" style="margin-top:10px">Record money in and money out</button>'+
+         '</div>';
+  }
+  return s;
+}
+
+/* ============================================================
+   THE GAP — passive income against living costs, read as today's position.
+   Active income sits outside it, as the fuel, with Seed for Freedom beneath.
+   ============================================================ */
+function scGap(){
+  var u = S.unit, w = UNIT_WORD[u];
+  var s = '<h2 class="sc">The gap</h2>' + tfControl();
+
+  if(!hasEstimates()){
+    s += '<div class="card"><p style="margin-top:0">No estimates are set out yet, so there is no gap to read.</p>'+
+         '<p class="note">Active income, living costs, giving and passive income are what the gap reads.</p>'+
+         '<button class="btn wide" data-a="tab" data-v="setup" style="margin-top:10px">Set out my estimates</button></div>';
+    return s;
+  }
+
+  var pas = sumNow(S.passive, u);
+  var basic = 0, above = 0;
+  for(var i=0;i<S.costs.length;i++){
+    var c = valueAt(S.costs[i], todayISO());
+    if(!c) continue;
+    if(S.costs[i].tier === "above") above += perUnit(c.amount, c.cycle, u);
+    else basic += perUnit(c.amount, c.cycle, u);
+  }
+  var costs = basic + above;
+  var free = pas >= costs && costs > 0;
+
+  s += '<div class="card">';
+  s += '<div class="kv"><div class="k">Passive income<small>estimate</small></div>'+
+       '<div class="v in">'+esc(nf0(pas))+' '+esc(w)+'</div></div>';
+  s += '<div class="kv"><div class="k">Living costs — basic needs<small>estimate</small></div>'+
+       '<div class="v out">'+esc(nf0(basic))+' '+esc(w)+'</div></div>';
+  s += '<div class="kv"><div class="k">Living costs — above basic<small>estimate</small></div>'+
+       '<div class="v out">'+esc(nf0(above))+' '+esc(w)+'</div></div>';
+  s += '<div class="kv"><div class="k">Living costs — all of it</div>'+
+       '<div class="v out">'+esc(nf0(costs))+' '+esc(w)+'</div></div>';
+  s += '<div class="sep"></div>';
+  if(free) s += '<p class="state">Today, passive income covers your living costs. This is the first marker on the journey.</p>';
+  else     s += '<p class="state">Today, passive income is under your living costs. Your work is what feeds you.</p>';
+  s += '<p class="note big">This is today’s position, read from the estimates you set out. '+
+       'It is not a mark you keep — it moves when the figures move, and a stream ending is not a fault.</p>';
+  s += '</div>';
+
+  var act = sumNow(S.active, u), giv = sumNow(S.giving, u);
+  var seed = act - giv - costs;
+  s += '<h3>The fuel — outside the equation</h3>';
+  s += '<div class="card">';
+  s += '<div class="kv"><div class="k">Active income<small>estimate</small></div>'+
+       '<div class="v in">'+esc(nf0(act))+' '+esc(w)+'</div></div>';
+  s += '<p class="note">Active income is not in the gap above and is never drawn on the graph. '+
+       'It stops when you stop. It is what pays today, and what could fund a stream.</p>';
+  s += '<div class="sep"></div>';
+  s += '<div class="k" style="font-weight:700">Seed for Freedom</div>';
+  s += '<div class="big '+(seed>=0?"in":"out")+'">'+esc(nf0(seed))+' <span style="font-size:14px;font-weight:600;color:var(--mute)">'+esc(w)+'</span></div>';
+  s += '<p class="note big">Active income, less giving, less living costs. '+
+       'This much could go toward a stream if you chose it. A figure of nothing is a true reading of a hard stretch.</p>';
+  s += '</div>';
+  return s;
+}
+
+/* ============================================================
+   THE PICTURE
+   ============================================================ */
+function scPicture(){
+  var u = S.unit, w = UNIT_WORD[u];
+  var s = '<h2 class="sc">The picture</h2>' + tfControl();
+  var sl = slices(u), i, A = [], B = [], V = [], M = [];
+  for(i=0;i<sl.length;i++){
+    var at = clampToday(sl[i].e);
+    A.push(sumAtOrNull(S.passive, at, u));
+    B.push(sumAtOrNull(S.costs, at, u));
+    V.push(outInSlice(sl[i]));
+    M.push(sumAtOrNull(S.costs, at, u));
+  }
+  var anyLine = false, anyBar = false;
+  for(i=0;i<sl.length;i++){ if(A[i]!==null||B[i]!==null) anyLine = true; if(V[i]>0) anyBar = true; }
+
+  s += '<div class="card">';
+  if(anyLine){
+    s += svgLines(sl, A, B);
+    s += '<div class="legend"><span><i style="background:#0a6f38"></i>Passive income</span>'+
+         '<span><i style="background:#a82318"></i>Living costs</span></div>';
+    s += '<p class="note">Each figure is spread across its own cycle, so rent for a month reads as a figure '+esc(w)+'. '+
+         'Both lines read your estimates. Nothing here is a projection.</p>';
+  } else {
+    s += '<p class="empty" style="margin:0">Nothing to draw yet. Passive income and living costs are drawn once you set them out.</p>';
+    s += '<button class="btn sec sm" data-a="tab" data-v="setup" style="margin-top:10px">Set out my estimates</button>';
+  }
+  var nd = undatedCount();
+  if(nd > 0) s += '<p class="note">'+nd+' '+(nd===1?"entry is":"entries are")+' not shown, no date.</p>';
+  s += '</div>';
+
+  s += '<h3>What actually went out</h3>';
+  s += '<div class="card">';
+  if(anyBar || anyLine){
+    s += svgBars(sl, V, M);
+    s += '<p class="note">Each bar is the money out you recorded in that '+esc(u)+'. '+
+         'The line across a bar is your estimate for a '+esc(u)+'. '+
+         'A bar over its mark spent more than the estimate set out.</p>';
+    s += '<p class="note">Anything marked as giving is held out of these bars. '+
+         'The bars hold what you recorded, which is rarely everything.</p>';
+  } else {
+    s += '<p class="empty" style="margin:0">Nothing recorded yet.</p>';
+    s += '<button class="btn sec sm" data-a="tab" data-v="ledger" style="margin-top:10px">Record money out</button>';
+  }
+  s += '</div>';
+  return s;
+}
+
+/* ============================================================
+   SETUP — the estimates. ESTIMATE is the word everywhere.
+   ============================================================ */
+var SETUP_PARTS = [
+  { key:"active",  title:"Active income",           note:"What you earn by working. It stops when you stop. This never enters the gap." },
+  { key:"costs",   title:"Living costs — estimates", note:"Basic needs are rent, food, transport, data. Above basic is everything else you pay for." },
+  { key:"giving",  title:"Giving",                   note:"Taken off the top, before Seed for Freedom. Recorded here, never measured." },
+  { key:"passive", title:"Passive income",           note:"What arrives whether or not you moved. Likely nothing at the start." }
+];
+
+function scSetup(){
+  var s = '<h2 class="sc">Estimates</h2>';
+  s += '<div class="card tight"><p class="note big" style="margin:0">An estimate is what you plan to spend or expect to receive, '+
+       'with the cycle it comes on. It can be exact and it can change — rent is exact until a landlord raises it.</p></div>';
+  for(var p=0;p<SETUP_PARTS.length;p++){
+    var P = SETUP_PARTS[p], list = S[P.key];
+    s += '<h3>'+esc(P.title)+'</h3>';
+    s += '<div class="card"><p class="note" style="margin-top:0">'+esc(P.note)+'</p>';
+    if(!list.length) s += '<p class="empty">Nothing set out here.</p>';
+    for(var i=0;i<list.length;i++){
+      var it = list[i], c = cur(it);
+      s += '<div class="kv"><div class="k">'+esc(it.name)+
+           '<small>'+esc(CYCLE_WORD[c.cycle])+(P.key==="costs"?" · "+(it.tier==="above"?"above basic":"basic needs"):"")+'</small></div>'+
+           '<div class="v '+(P.key==="costs"||P.key==="giving"?"out":"in")+'">'+esc(nf(c.amount))+'</div>'+
+           '<button class="btn xs sec" data-a="edEst" data-k="'+P.key+'" data-i="'+it.id+'">Edit</button></div>';
+    }
+    s += '<div class="row end" style="margin-top:10px">'+
+         '<button class="btn sec sm" data-a="addEst" data-k="'+P.key+'">Add</button></div>';
+    s += '</div>';
+  }
+  s += '<p class="note">A change is kept with the date you made it, so the graph shows what was true at the time. '+
+       'The past is not rewritten.</p>';
+  return s;
+}
+
+/* ============================================================
+   THE LEDGER — two fields: how much, and for what.
+   The date defaults to now and can be changed. Everything is editable after.
+   ============================================================ */
+function scLedger(){
+  var s = '<h2 class="sc">The ledger</h2>';
+  s += '<div class="card">'+
+       '<label class="f">How much</label>'+
+       '<input id="lAmt" type="number" inputmode="decimal" step="0.01" placeholder="0">'+
+       '<label class="f">For what</label>'+
+       '<input id="lWhat" type="text" placeholder="">'+
+       '<label class="f">Date</label>'+
+       '<input id="lDate" type="date" value="'+todayISO()+'">'+
+       '<div class="two" style="margin-top:12px">'+
+         '<button class="btn gin" data-a="addEntry" data-v="in">Money in</button>'+
+         '<button class="btn gout" data-a="addEntry" data-v="out">Money out</button>'+
+       '</div>'+
+       '<div class="err" id="lErr"></div>'+
+       '</div>';
+  s += '<div class="row" style="margin-bottom:12px">'+
+       '<button class="btn sec sm" data-a="tab" data-v="paste">Paste rows from your sheet</button></div>';
+
+  var list = S.entries.slice();
+  list.sort(function(a,b){
+    if(!a.date && b.date) return -1;
+    if(a.date && !b.date) return 1;
+    if(a.date !== b.date) return a.date < b.date ? 1 : -1;
+    return (b.n||0) - (a.n||0);
+  });
+  if(!list.length) return s + '<p class="empty">Nothing recorded yet.</p>';
+
+  var shown = list.slice(0, 300), lastDay = " ";
+  for(var i=0;i<shown.length;i++){
+    var x = shown[i], day = x.date || "";
+    if(day !== lastDay){
+      lastDay = day;
+      s += '<div class="daylab">'+esc(x.date ? niceDate(x.date) : "No date")+'</div>';
+    }
+    s += '<div class="item" data-a="edEntry" data-i="'+esc(x.id)+'"><div class="top">'+
+         '<div class="t">'+ (x.unreadable
+            ? '<span class="tag warn">Cannot be read</span>'+esc(x.raw||"")
+            : esc(x.what || "—")) +'</div>'+
+         '<div class="amt '+(x.dir==="in"?"in":"out")+'">'+
+           (x.unreadable ? "" : (x.dir==="in"?"+":"−")+esc(nf(x.amount))) +'</div></div>';
+    var tags = "";
+    if(!x.date) tags += '<span class="tag warn">No date · held out of the graph</span>';
+    if(x.giving) tags += '<span class="tag">giving</span>';
+    if(x.pasted) tags += '<span class="tag">pasted</span>';
+    if(tags) s += '<div class="sub">'+tags+'</div>';
+    s += '</div>';
+  }
+  if(list.length > shown.length)
+    s += '<p class="note">'+shown.length+' of '+list.length+' shown.</p>';
+  return s;
+}
+
+/* ============================================================
+   THE PASTE BOX — the paste lands whole. Nothing is discarded,
+   nothing is blocked, and there is no review screen.
+   ============================================================ */
+function scPaste(){
+  var s = '<h2 class="sc">Paste box</h2>';
+  s += '<div class="card">'+
+    '<p style="margin-top:0">Copy the rows out of your sheet and paste them here. '+
+    'Timestamp, date, money in or money out, amount, for what. The date column is the one used.</p>'+
+    '<p class="note">The paste lands whole. A line that cannot be read still lands, holding its own text, '+
+    'marked in the ledger and fixable there. A line with no date sits in the ledger and is held out of the graph until you date it.</p>'+
+    '<p class="note">What you pasted from — a note, a message, a sheet — sits outside this app and stays there until you clear it yourself.</p>'+
+    '<textarea id="pBox" placeholder="Paste here" style="min-height:170px;margin-top:10px"></textarea>'+
+    '<div class="row" style="margin-top:10px">'+
+      '<button class="btn" data-a="doPaste">Land it in the ledger</button>'+
+      '<button class="btn sec" data-a="tab" data-v="ledger">Back</button></div>'+
+    '<div class="err" id="pErr"></div></div>';
+  return s;
+}
+
+function numFrom(t){
+  var c = String(t).replace(/[^\d.,\-]/g,"").replace(/,/g,"");
+  if(!/\d/.test(c)) return null;
+  var n = parseFloat(c);
+  return isNaN(n) ? null : Math.abs(n);
+}
+function looksDate(t){
+  t = String(t).trim();
+  if(/^\d{4}[-/]\d{1,2}[-/]\d{1,2}/.test(t)) return true;
+  if(/^\d{1,2}[-/.]\d{1,2}([-/.]\d{2,4})?$/.test(t)) return true;
+  if(/^\d{1,2}\s+[A-Za-z]{3,}\.?,?\s*\d{0,4}$/.test(t)) return true;
+  if(/^[A-Za-z]{3,}\.?\s+\d{1,2},?\s*\d{0,4}$/.test(t)) return true;
+  return false;
+}
+function monthNum(w){
+  w = String(w).toLowerCase().slice(0,3);
+  var m = ["jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"];
+  var i = m.indexOf(w); return i < 0 ? null : i+1;
+}
+function parseDate(t, dayFirst){
+  t = String(t).trim(); if(!t) return null;
+  var m, y, mo, d, now = new Date();
+  if((m = t.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})/))){ y=+m[1]; mo=+m[2]; d=+m[3]; }
+  else if((m = t.match(/^(\d{1,2})[-/.](\d{1,2})(?:[-/.](\d{2,4}))?/))){
+    var a=+m[1], b=+m[2];
+    y = m[3] ? +m[3] : now.getFullYear();
+    if(y < 100) y += 2000;
+    if(a > 12){ d=a; mo=b; }
+    else if(b > 12){ d=b; mo=a; }
+    else if(dayFirst){ d=a; mo=b; }
+    else { mo=a; d=b; }
+  }
+  else if((m = t.match(/^(\d{1,2})\s+([A-Za-z]{3,})\.?,?\s*(\d{2,4})?/))){
+    d=+m[1]; mo=monthNum(m[2]); y = m[3] ? +m[3] : now.getFullYear(); if(y<100) y+=2000;
+  }
+  else if((m = t.match(/^([A-Za-z]{3,})\.?\s+(\d{1,2}),?\s*(\d{2,4})?/))){
+    mo=monthNum(m[1]); d=+m[2]; y = m[3] ? +m[3] : now.getFullYear(); if(y<100) y+=2000;
+  }
+  else return null;
+  if(!mo || !d || mo<1 || mo>12 || d<1 || d>31) return null;
+  return y+"-"+pad2(mo)+"-"+pad2(d);
+}
+function dirFrom(t){
+  var s = String(t).toLowerCase().replace(/[^a-z]/g,"");
+  if(s === "moneyin" || s === "in" || s === "credit" || s === "cr" || s === "income" || s === "inflow") return "in";
+  if(s === "moneyout" || s === "out" || s === "debit" || s === "dr" || s === "expense" || s === "outflow") return "out";
+  return null;
+}
+function splitRow(line){
+  if(line.indexOf("\t") >= 0) return line.split("\t");
+  var p = line.split(/\s{2,}/);
+  if(p.length >= 3) return p;
+  p = line.split(/\s*[|;]\s*/);
+  if(p.length >= 3) return p;
+  return line.split(/\s*,\s*/);
+}
+
+function doPaste(){
+  var raw = $("pBox").value || "";
+  var lines = raw.split(/\r?\n/), rows = [], i, j;
+  for(i=0;i<lines.length;i++){ if(lines[i].trim()) rows.push(lines[i]); }
+  if(!rows.length){ $("pErr").textContent = "Nothing pasted."; return; }
+
+  /* which way round are the ambiguous dates? Take it from the lines that cannot be mistaken. */
+  var dayFirst = true, dfVotes = 0, mfVotes = 0;
+  for(i=0;i<rows.length;i++){
+    var cs = splitRow(rows[i]);
+    for(j=0;j<cs.length;j++){
+      var mm = String(cs[j]).trim().match(/^(\d{1,2})[-/.](\d{1,2})(?:[-/.]\d{2,4})?$/);
+      if(mm){ if(+mm[1] > 12) dfVotes++; else if(+mm[2] > 12) mfVotes++; }
+    }
+  }
+  if(mfVotes > dfVotes) dayFirst = false;
+
+  var n = 0, added = 0;
+  for(i=0;i<rows.length;i++){
+    var line = rows[i], cells = splitRow(line), k;
+    for(k=0;k<cells.length;k++) cells[k] = String(cells[k]).trim();
+
+    /* a header row is one whose cells are column names, exactly */
+    var hits = 0;
+    for(k=0;k<cells.length;k++){
+      var h = cells[k].toLowerCase().replace(/[^a-z ]/g,"").trim();
+      if(h==="timestamp"||h==="date"||h==="direction"||h==="amount"||h==="for what"||
+         h==="what"||h==="description"||h==="narration"||h==="details"||h==="memo") hits++;
+    }
+    if(hits >= 2) continue;
+
+    var dirIdx = -1, dir = null;
+    for(k=0;k<cells.length;k++){ var d0 = dirFrom(cells[k]); if(d0){ dirIdx = k; dir = d0; break; } }
+
+    var date = null, amount = null, what = "";
+    if(dirIdx >= 0){
+      /* DATE is the last readable date before the direction — the timestamp comes first and is ignored */
+      for(k=dirIdx-1;k>=0;k--){ if(looksDate(cells[k])){ date = parseDate(cells[k], dayFirst); if(date) break; } }
+      for(k=dirIdx+1;k<cells.length;k++){ var a0 = numFrom(cells[k]); if(a0 !== null){ amount = a0; break; } }
+      var rest = [];
+      var seen = false;
+      for(k=dirIdx+1;k<cells.length;k++){
+        if(!seen && numFrom(cells[k]) !== null){ seen = true; continue; }
+        if(seen && cells[k]) rest.push(cells[k]);
+      }
+      what = rest.join(" ").trim();
+    }
+
+    n++;
+    if(dir && amount !== null){
+      S.entries.push({ id:uid(), n:Date.now()+n, date:date, dir:dir, amount:amount,
+                       what:what, giving:false, unreadable:false, raw:line, pasted:true });
+      added++;
+    } else {
+      S.entries.push({ id:uid(), n:Date.now()+n, date:date, dir:"out", amount:0,
+                       what:"", giving:false, unreadable:true, raw:line, pasted:true });
+    }
+  }
+  save();
+  go("ledger");
+}
+
+/* ============================================================
+   THE CUPBOARD — rooms he names himself. Two baskets. One tap to take.
+   When the in-use one runs out, the reserve is drawn on and a refill
+   lands on the pending list. Nothing nags for completeness.
+   ============================================================ */
+function roomOf(id){ for(var i=0;i<S.rooms.length;i++) if(S.rooms[i].id===id) return S.rooms[i]; return null; }
+function itemOf(room, id){ for(var i=0;i<room.items.length;i++) if(room.items[i].id===id) return room.items[i]; return null; }
+function isPending(itemId){ for(var i=0;i<S.pending.length;i++) if(S.pending[i].itemId===itemId) return true; return false; }
+function addPending(room, item){
+  if(isPending(item.id)) return;      /* no carry, no doubling */
+  S.pending.push({ id:uid(), itemId:item.id, roomId:room.id,
+                   name:item.name, room:room.name, date:todayISO() });
+}
+function pullReserve(room, item){
+  if(item.reserve > 0){ item.reserve -= 1; item.inUse += 1; }
+  addPending(room, item);
+}
+function takeItem(roomId, itemId){
+  var r = roomOf(roomId); if(!r) return;
+  var it = itemOf(r, itemId); if(!it) return;
+  if(it.inUse <= 0){ pullReserve(r, it); if(it.inUse <= 0){ save(); paint(); return; } }
+  it.inUse -= 1;
+  it.takes.push(todayISO());
+  if(it.takes.length > 60) it.takes = it.takes.slice(-60);
+  if(it.inUse <= 0) pullReserve(r, it);
+  save(); paint();
+}
+
+function scCupboard(){
+  var s = '<h2 class="sc">The cupboard</h2>';
+  s += '<div class="card tight"><p class="note big" style="margin:0">Two baskets for each item — the one in use, '+
+       'and the reserve behind it. Take an item and the count falls with today’s date on it. '+
+       'When the one in use runs out, the reserve is drawn on and a refill lands below.</p></div>';
+
+  for(var r=0;r<S.rooms.length;r++){
+    var R = S.rooms[r];
+    s += '<div class="card"><div class="top" style="display:flex;gap:8px;align-items:baseline">'+
+         '<div style="flex:1;font-weight:700;font-size:16px">'+esc(R.name)+'</div>'+
+         '<button class="btn xs sec" data-a="renRoom" data-r="'+esc(R.id)+'">Rename</button>'+
+         '<button class="btn xs sec" data-a="delRoom" data-r="'+esc(R.id)+'">Remove</button></div>';
+    if(!R.items.length) s += '<p class="empty">Nothing listed here.</p>';
+    for(var i=0;i<R.items.length;i++){
+      var it = R.items[i];
+      var lastTake = it.takes.length ? it.takes[it.takes.length-1] : null;
+      s += '<div class="kv"><div class="k">'+esc(it.name)+
+           '<small>In use '+it.inUse+' · Reserve '+it.reserve+
+           (lastTake ? ' · last taken '+esc(shortDate(lastTake)) : '')+'</small></div>'+
+           '<button class="btn xs" data-a="take" data-r="'+esc(R.id)+'" data-i="'+esc(it.id)+'">Take</button>'+
+           '<button class="btn xs sec" data-a="edItem" data-r="'+esc(R.id)+'" data-i="'+esc(it.id)+'">Edit</button>'+
+           '</div>';
+    }
+    s += '<div class="row end" style="margin-top:10px">'+
+         '<button class="btn sec sm" data-a="addItem" data-r="'+esc(R.id)+'">Add an item</button></div></div>';
+  }
+  s += '<div class="row" style="margin-bottom:14px"><button class="btn sec sm" data-a="addRoom">Add a room</button></div>';
+
+  s += '<h3>Pending refills</h3>';
+  s += '<div class="card">';
+  if(!S.pending.length) s += '<p class="empty" style="margin:0">Nothing pending.</p>';
+  for(var p=0;p<S.pending.length;p++){
+    var P = S.pending[p];
+    s += '<div class="kv"><div class="k">'+esc(P.name)+'<small>'+esc(P.room)+' · since '+esc(shortDate(P.date))+'</small></div>'+
+         '<button class="btn xs" data-a="fillPend" data-p="'+esc(P.id)+'">Filled</button>'+
+         '<button class="btn xs sec" data-a="delPend" data-p="'+esc(P.id)+'">Remove</button></div>';
+  }
+  s += '<p class="note">A refill you cannot afford stays here. No carry, no doubling, nothing counted against you.</p>';
+  s += '</div>';
+  return s;
+}
+
+/* ============================================================
+   TALKING WITH GOD
+   ============================================================ */
+function scGod(){
+  var v = dailyVerse();
+  var s = '<h2 class="sc">Talking with GOD</h2>';
+  s += '<div class="scr"><span class="ref">'+esc(v[0])+'</span> '+esc(v[1])+'</div>';
+
+  s += '<h3>Letters</h3>';
+  s += '<div class="card">';
+  s += '<p class="note" style="margin-top:0">Letters run from you to GOD. Dated, standing on their own, never required.</p>';
+  if(!S.letters.length) s += '<p class="empty">Nothing written yet.</p>';
+  var L = S.letters.slice().reverse();
+  for(var i=0;i<L.length;i++){
+    var l = L[i], first = String(l.text).split("\n")[0];
+    s += '<div class="kv" data-a="edLetter" data-i="'+esc(l.id)+'"><div class="k">'+
+         esc(first.slice(0,60) + (first.length>60?"…":"")) +
+         '<small>'+esc(niceDate(l.date))+'</small></div></div>';
+  }
+  s += '<div class="row end" style="margin-top:10px"><button class="btn sm" data-a="newLetter">Write to GOD</button></div>';
+  s += '</div>';
+
+  s += '<h3>Threads</h3>';
+  s += '<div class="card">';
+  s += '<p class="note" style="margin-top:0">Write the difficulty you are in. Write again when something moves. '+
+       'A thread can run for years and a closed one stays open to writing forever.</p>';
+  s += '<div class="row end" style="margin-top:8px"><button class="btn sm" data-a="newThread">Open a thread</button></div>';
+  s += '</div>';
+
+  if(!S.threads.length) s += '<p class="empty">No threads yet.</p>';
+  var T = S.threads.slice().reverse();
+  for(var t=0;t<T.length;t++){
+    var th = T[t];
+    s += '<div class="item"><div class="top"><div class="t">'+esc(th.title)+'</div>'+
+         (th.open ? '' : '<span class="tag">closed '+esc(shortDate(th.closed))+'</span>')+'</div>';
+    for(var e=0;e<th.entries.length;e++){
+      var en = th.entries[e];
+      s += '<div class="sub" style="margin-top:8px;color:var(--ink);white-space:pre-wrap">'+esc(en.text)+'</div>'+
+           '<div class="sub" data-a="edThEntry" data-i="'+esc(th.id)+'" data-e="'+esc(en.id)+'">'+
+           esc(niceDate(en.date))+' · edit</div>';
+    }
+    s += '<div class="row" style="margin-top:10px">'+
+         '<button class="btn xs" data-a="addThEntry" data-i="'+esc(th.id)+'">Add an entry</button>'+
+         (th.open
+           ? '<button class="btn xs sec" data-a="closeTh" data-i="'+esc(th.id)+'">Close it</button>'
+           : '<button class="btn xs sec" data-a="openTh" data-i="'+esc(th.id)+'">Open it again</button>')+
+         '</div></div>';
+  }
+  return s;
+}
+
+/* ============================================================
+   MORE
+   ============================================================ */
+function scMore(){
+  var s = '<h2 class="sc">More</h2>';
+  s += '<div class="card">'+
+       '<button class="btn sec wide" data-a="tab" data-v="setup" style="margin-bottom:8px">Estimates</button>'+
+       '<button class="btn sec wide" data-a="tab" data-v="welcome" style="margin-bottom:8px">The welcome · vision · legacy</button>'+
+       '<button class="btn sec wide" data-a="tab" data-v="paste">Paste box</button></div>';
+
+  s += '<h3>Talking with GOD</h3>';
+  s += '<div class="card">'+
+       '<button class="sw" data-a="faith" aria-pressed="'+(!!S.faith)+'" style="background:none;border:0;padding:0;width:100%">'+
+         '<span class="box"><b></b></span>'+
+         '<span style="text-align:left;font-weight:600">'+(S.faith?"On":"Set aside")+'</span>'+
+       '</button>'+
+       '<p class="note">This governs the daily verse, the letters, and the threads. '+
+       'The verse at the bottom of the app is always there.</p></div>';
+
+  s += '<h3>Backup</h3>';
+  s += '<div class="card">'+
+       '<p class="note" style="margin-top:0">One file, locked with your own word or phrase. '+
+       'It holds everything and it is what moves your record to another phone.</p>'+
+       '<button class="btn wide" data-a="backup" style="margin-bottom:8px">'+esc(handOutWord())+'</button>'+
+       '<button class="btn sec wide" data-a="restore">Restore from a backup file</button>'+
+       '<input id="mfile" type="file" accept=".fibackup,application/json,.json,.txt" class="hide">'+
+       '<div class="err" id="mrestoreerr"></div>'+
+       '<p class="note">Restoring replaces what is on this phone with what is in the file.</p></div>';
+
+  s += '<h3>What this app does not do</h3>';
+  s += '<div class="card"><p class="note big" style="margin-top:0">'+
+       'It holds only what you write. It cannot see your bank, and cash it was never told about is invisible to it. '+
+       'Recorded money out is rarely everything that went out.<br><br>'+
+       'It gives no advice and names no place to put money. Every figure is arithmetic over your own entries.<br><br>'+
+       'Nothing leaves this phone. There is no account, no sync and no server, so nobody can open your record for you '+
+       'and nobody can recover it if the word or phrase and the recovery key are both lost.</p></div>';
+
+  s += '<div class="card tight"><p class="note" style="margin:0">Free Indeed v'+esc(APP_VERSION)+
+       ' · SpiritWrought Ltd<br>Every figure here is in '+esc(CUR)+'.</p></div>';
+  s += '<button class="btn sec wide" data-a="lock">Lock the app</button>';
+  return s;
+}
+
+/* ============================================================
+   SHEETS — small panels that slide up. The standing door is not one of these.
+   ============================================================ */
+function sheet(html){
+  $("modal").innerHTML = '<div class="modal"><div class="sheet">'+html+'</div></div>';
+  var f = $("modal").querySelector("input,textarea");
+  if(f) setTimeout(function(){ try{ f.focus(); }catch(e){} }, 60);
+}
+function closeSheet(){ $("modal").innerHTML = ""; }
+
+function writerSheet(title, note, text, saveLabel, onSave, extra){
+  sheet('<h3>'+esc(title)+'</h3>'+
+    (note ? '<p class="note big" style="margin-top:0">'+esc(note)+'</p>' : '')+
+    '<textarea id="wText">'+esc(text||"")+'</textarea>'+
+    (extra || '')+
+    '<div class="row" style="margin-top:12px">'+
+      '<button class="btn" id="wSave">'+esc(saveLabel||"Keep it")+'</button>'+
+      '<button class="btn sec" data-a="close">Close</button>'+
+    '</div>');
+  $("wSave").onclick = function(){
+    var t = $("wText").value;
+    if(!String(t).trim()){ closeSheet(); return; }
+    onSave(t);
+  };
+}
+
+var CYCLE_OPTS = '<option value="daily">daily</option><option value="weekly">weekly</option>'+
+                 '<option value="monthly">monthly</option><option value="yearly">yearly</option>';
+
+function estSheet(key, item){
+  var P = null;
+  for(var i=0;i<SETUP_PARTS.length;i++) if(SETUP_PARTS[i].key===key) P = SETUP_PARTS[i];
+  var c = item ? cur(item) : null;
+  sheet('<h3>'+esc(P.title)+'</h3>'+
+    '<label class="f">What it is</label>'+
+    '<input id="eName" type="text" value="'+esc(item?item.name:"")+'">'+
+    '<div class="two">'+
+      '<div><label class="f">Estimate</label>'+
+        '<input id="eAmt" type="number" inputmode="decimal" step="0.01" value="'+(c?c.amount:"")+'"></div>'+
+      '<div><label class="f">Cycle</label><select id="eCyc">'+CYCLE_OPTS+'</select></div>'+
+    '</div>'+
+    (key==="costs"
+      ? '<label class="f">Which tier</label><select id="eTier">'+
+        '<option value="basic">Basic needs — rent, food, transport, data</option>'+
+        '<option value="above">Above basic — everything else</option></select>' : '')+
+    '<div class="row" style="margin-top:14px">'+
+      '<button class="btn" id="eSave">Keep it</button>'+
+      '<button class="btn sec" data-a="close">Close</button>'+
+      (item ? '<button class="btn sec" id="eDel" style="margin-left:auto">Remove</button>' : '')+
+    '</div>'+
+    '<div class="err" id="eErr"></div>');
+  if(c) $("eCyc").value = c.cycle;
+  if(key==="costs" && item) $("eTier").value = item.tier === "above" ? "above" : "basic";
+  $("eSave").onclick = function(){
+    var nm = $("eName").value.trim(), am = $("eAmt").value, cy = $("eCyc").value;
+    if(!nm){ $("eErr").textContent = "Give it a name."; return; }
+    if(am === "" || isNaN(+am)){ $("eErr").textContent = "Give it an estimate."; return; }
+    if(item){
+      item.name = nm;
+      if(key==="costs") item.tier = $("eTier").value;
+      setItem(item, am, cy);
+    } else {
+      S[key].push(mkItem(nm, am, cy, key==="costs" ? $("eTier").value : null));
+    }
+    save(); closeSheet(); paint();
+  };
+  if(item) $("eDel").onclick = function(){
+    var L = S[key];
+    for(var i=0;i<L.length;i++) if(L[i].id===item.id){ L.splice(i,1); break; }
+    save(); closeSheet(); paint();
+  };
+}
+
+function entrySheet(x){
+  sheet('<h3>Entry</h3>'+
+    (x.unreadable ? '<p class="note big" style="margin-top:0"><span class="tag warn">Cannot be read</span><br>'+
+        esc(x.raw||"")+'</p>' : '')+
+    '<label class="f">How much</label>'+
+    '<input id="xAmt" type="number" inputmode="decimal" step="0.01" value="'+(x.amount||"")+'">'+
+    '<label class="f">For what</label>'+
+    '<input id="xWhat" type="text" value="'+esc(x.what||"")+'">'+
+    '<label class="f">Which way</label>'+
+    '<select id="xDir"><option value="out">Money out</option><option value="in">Money in</option></select>'+
+    '<label class="f">Date</label>'+
+    '<input id="xDate" type="date" value="'+esc(x.date||"")+'">'+
+    '<label class="row" style="margin-top:12px;font-size:14px">'+
+      '<input id="xGive" type="checkbox" style="width:auto;margin-right:8px"'+(x.giving?" checked":"")+'>'+
+      'This was giving — held out of the living costs reading and never measured</label>'+
+    '<div class="row" style="margin-top:14px">'+
+      '<button class="btn" id="xSave">Keep it</button>'+
+      '<button class="btn sec" data-a="close">Close</button>'+
+      '<button class="btn sec" id="xDel" style="margin-left:auto">Delete</button>'+
+    '</div>'+
+    '<div class="err" id="xErr"></div>');
+  $("xDir").value = x.dir === "in" ? "in" : "out";
+  $("xSave").onclick = function(){
+    var am = $("xAmt").value;
+    if(am === "" || isNaN(+am)){ $("xErr").textContent = "Give it a figure."; return; }
+    x.amount = Math.abs(+am);
+    x.what = $("xWhat").value.trim();
+    x.dir = $("xDir").value;
+    x.date = $("xDate").value || null;
+    x.giving = $("xGive").checked;
+    if(x.amount > 0) x.unreadable = false;
+    save(); closeSheet(); paint();
+  };
+  $("xDel").onclick = function(){
+    for(var i=0;i<S.entries.length;i++) if(S.entries[i].id===x.id){ S.entries.splice(i,1); break; }
+    save(); closeSheet(); paint();
+  };
+}
+
+function itemSheet(room, item){
+  sheet('<h3>'+(item?"Item":"Add an item")+'</h3>'+
+    '<p class="note big" style="margin-top:0">Items that come in multiples and run out. '+
+    'Everything else is only an expense.</p>'+
+    '<label class="f">What it is</label>'+
+    '<input id="iName" type="text" value="'+esc(item?item.name:"")+'">'+
+    '<div class="two">'+
+      '<div><label class="f">In use</label><input id="iUse" type="number" inputmode="numeric" min="0" step="1" value="'+(item?item.inUse:1)+'"></div>'+
+      '<div><label class="f">Reserve</label><input id="iRes" type="number" inputmode="numeric" min="0" step="1" value="'+(item?item.reserve:1)+'"></div>'+
+    '</div>'+
+    '<div class="row" style="margin-top:14px">'+
+      '<button class="btn" id="iSave">Keep it</button>'+
+      '<button class="btn sec" data-a="close">Close</button>'+
+      (item ? '<button class="btn sec" id="iDel" style="margin-left:auto">Remove</button>' : '')+
+    '</div>'+
+    '<div class="err" id="iErr"></div>');
+  $("iSave").onclick = function(){
+    var nm = $("iName").value.trim();
+    if(!nm){ $("iErr").textContent = "Give it a name."; return; }
+    var u = Math.max(0, Math.round(+$("iUse").value||0));
+    var r = Math.max(0, Math.round(+$("iRes").value||0));
+    if(item){ item.name = nm; item.inUse = u; item.reserve = r; }
+    else room.items.push({ id:uid(), name:nm, inUse:u, reserve:r, takes:[] });
+    save(); closeSheet(); paint();
+  };
+  if(item) $("iDel").onclick = function(){
+    for(var i=0;i<room.items.length;i++) if(room.items[i].id===item.id){ room.items.splice(i,1); break; }
+    for(var p=S.pending.length-1;p>=0;p--) if(S.pending[p].itemId===item.id) S.pending.splice(p,1);
+    save(); closeSheet(); paint();
+  };
+}
+
+function nameSheet(title, value, onSave, onRemove){
+  sheet('<h3>'+esc(title)+'</h3>'+
+    '<input id="nName" type="text" value="'+esc(value||"")+'">'+
+    '<div class="row" style="margin-top:14px">'+
+      '<button class="btn" id="nSave">Keep it</button>'+
+      '<button class="btn sec" data-a="close">Close</button>'+
+      (onRemove ? '<button class="btn sec" id="nDel" style="margin-left:auto">Remove</button>' : '')+
+    '</div>');
+  $("nSave").onclick = function(){
+    var t = $("nName").value.trim(); if(!t) return;
+    onSave(t); save(); closeSheet(); paint();
+  };
+  if(onRemove) $("nDel").onclick = function(){ onRemove(); save(); closeSheet(); paint(); };
+}
+
+/* the closing prompt — the Later line says plainly that the exit costs nothing */
+function closeThreadSheet(th){
+  sheet('<h3>Want to write how GOD showed up?</h3>'+
+    '<div class="row" style="margin-top:6px">'+
+      '<button class="btn" id="tNow">Write it now</button></div>'+
+    '<div class="row" style="margin-top:8px">'+
+      '<button class="btn sec wide" id="tLater">Later — this stays open, and you can come back any time</button></div>');
+  $("tNow").onclick = function(){
+    writerSheet("How GOD showed up", "", "", "Keep it", function(t){
+      th.entries.push({ id:uid(), date:todayISO(), text:t });
+      th.open = false; th.closed = todayISO();
+      save(); closeSheet(); paint();
+    });
+  };
+  $("tLater").onclick = function(){
+    th.open = false; th.closed = todayISO();
+    save(); closeSheet(); paint();
+  };
+}
+
+/* ============================================================
+   BACKUP — the whole record, still locked, handed out as one file
+   ============================================================ */
+async function doBackup(){
+  await save();
+  var v = vault();
+  if(!v){ return; }
+  var name = "FreeIndeed-backup-" + todayISO() + ".fibackup";
+  var r = await handOut(name, JSON.stringify(v), "application/json");
+  var e = $("mrestoreerr");
+  if(e){
+    if(r === "shared") e.textContent = "Backup sent.";
+    else if(r === "saved") e.textContent = "Backup saved as " + name + ".";
+    else if(r === "cancelled") e.textContent = "Nothing was sent.";
+    else e.textContent = "The file did not save.";
+  }
+}
+
+/* ============================================================
+   EVERY TAP
+   ============================================================ */
+function findTh(id){ for(var i=0;i<S.threads.length;i++) if(S.threads[i].id===id) return S.threads[i]; return null; }
+function findEntry(id){ for(var i=0;i<S.entries.length;i++) if(S.entries[i].id===id) return S.entries[i]; return null; }
+function findEst(key,id){ var L=S[key]; for(var i=0;i<L.length;i++) if(L[i].id===id) return L[i]; return null; }
+
+function onTap(ev){
+  var t = ev.target.closest ? ev.target.closest("[data-a]") : null;
+  if(!t) return;
+  var a = t.getAttribute("data-a"), v = t.getAttribute("data-v");
+
+  if(a === "close"){ closeSheet(); return; }
+  if(a === "tab"){ closeSheet(); go(v); return; }
+  if(a === "unit"){ S.unit = v; save(); paint(); return; }
+  if(a === "lock"){ location.reload(); return; }
+
+  if(a === "faith"){
+    S.faith = !S.faith;
+    if(!S.faith && scr === "god") scr = "more";
+    save(); paint(); return;
+  }
+
+  if(a === "vision"){
+    var lv = latest(S.visions);
+    writerSheet("The vision", "What financial freedom means to you, in your own words.",
+      "", "Keep it", function(txt){
+        S.visions.push({ id:uid(), date:todayISO(), text:txt });
+        save(); closeSheet(); paint();
+      });
+    if(lv) $("wText").value = lv.text;
+    return;
+  }
+  if(a === "legacy"){
+    var ll = latest(S.legacies);
+    writerSheet("The legacy", "What you want your freedom to make possible.",
+      "", "Keep it", function(txt){
+        S.legacies.push({ id:uid(), date:todayISO(), text:txt });
+        save(); closeSheet(); paint();
+      });
+    if(ll) $("wText").value = ll.text;
+    return;
+  }
+
+  if(a === "addEntry"){
+    var am = $("lAmt").value, er = $("lErr");
+    if(am === "" || isNaN(+am)){ er.textContent = "How much?"; return; }
+    S.entries.push({ id:uid(), n:Date.now(), date: $("lDate").value || null,
+      dir: v, amount: Math.abs(+am), what: $("lWhat").value.trim(),
+      giving:false, unreadable:false, raw:"", pasted:false });
+    save(); paint(); return;
+  }
+  if(a === "edEntry"){ var x = findEntry(t.getAttribute("data-i")); if(x) entrySheet(x); return; }
+  if(a === "doPaste"){ doPaste(); return; }
+
+  if(a === "addEst"){ estSheet(t.getAttribute("data-k"), null); return; }
+  if(a === "edEst"){
+    var k = t.getAttribute("data-k");
+    var it = findEst(k, t.getAttribute("data-i"));
+    if(it) estSheet(k, it);
+    return;
+  }
+
+  if(a === "addRoom"){
+    nameSheet("Add a room", "", function(nm){ S.rooms.push({ id:uid(), name:nm, items:[] }); });
+    return;
+  }
+  if(a === "renRoom"){
+    var R1 = roomOf(t.getAttribute("data-r")); if(!R1) return;
+    nameSheet("Room name", R1.name, function(nm){ R1.name = nm; });
+    return;
+  }
+  if(a === "delRoom"){
+    var R2 = roomOf(t.getAttribute("data-r")); if(!R2) return;
+    nameSheet("Remove " + R2.name + "?", R2.name,
+      function(nm){ R2.name = nm; },
+      function(){
+        for(var i=0;i<S.rooms.length;i++) if(S.rooms[i].id===R2.id){ S.rooms.splice(i,1); break; }
+        for(var p=S.pending.length-1;p>=0;p--) if(S.pending[p].roomId===R2.id) S.pending.splice(p,1);
+      });
+    return;
+  }
+  if(a === "addItem"){ var R3 = roomOf(t.getAttribute("data-r")); if(R3) itemSheet(R3, null); return; }
+  if(a === "edItem"){
+    var R4 = roomOf(t.getAttribute("data-r")); if(!R4) return;
+    var I4 = itemOf(R4, t.getAttribute("data-i")); if(I4) itemSheet(R4, I4);
+    return;
+  }
+  if(a === "take"){ takeItem(t.getAttribute("data-r"), t.getAttribute("data-i")); return; }
+  if(a === "fillPend"){
+    var pid = t.getAttribute("data-p");
+    for(var q=0;q<S.pending.length;q++){
+      if(S.pending[q].id === pid){
+        var rr = roomOf(S.pending[q].roomId);
+        if(rr){ var ii = itemOf(rr, S.pending[q].itemId); if(ii) ii.reserve += 1; }
+        S.pending.splice(q,1); break;
+      }
+    }
+    save(); paint(); return;
+  }
+  if(a === "delPend"){
+    var pid2 = t.getAttribute("data-p");
+    for(var q2=0;q2<S.pending.length;q2++) if(S.pending[q2].id===pid2){ S.pending.splice(q2,1); break; }
+    save(); paint(); return;
+  }
+
+  if(a === "newLetter"){
+    writerSheet("Write to GOD", "Dated, standing on its own. Nothing is required of it.",
+      "", "Keep it", function(txt){
+        S.letters.push({ id:uid(), date:todayISO(), text:txt });
+        save(); closeSheet(); if(scr !== "god") go("god"); else paint();
+      });
+    return;
+  }
+  if(a === "edLetter"){
+    var lid = t.getAttribute("data-i"), L = null;
+    for(var li=0;li<S.letters.length;li++) if(S.letters[li].id===lid) L = S.letters[li];
+    if(!L) return;
+    writerSheet("Letter · " + niceDate(L.date), "", L.text, "Keep it", function(txt){
+      L.text = txt; save(); closeSheet(); paint();
+    });
+    return;
+  }
+
+  if(a === "newThread"){
+    nameSheet("What are you in?", "", function(title){
+      S.threads.push({ id:uid(), title:title, open:true, closed:null,
+        entries:[{ id:uid(), date:todayISO(), text:title }] });
+    });
+    return;
+  }
+  if(a === "addThEntry"){
+    var th1 = findTh(t.getAttribute("data-i")); if(!th1) return;
+    writerSheet("Add to “" + th1.title + "”", "", "", "Keep it", function(txt){
+      th1.entries.push({ id:uid(), date:todayISO(), text:txt });
+      save(); closeSheet(); paint();
+    });
+    return;
+  }
+  if(a === "edThEntry"){
+    var th2 = findTh(t.getAttribute("data-i")); if(!th2) return;
+    var eid = t.getAttribute("data-e"), EN = null;
+    for(var ei=0;ei<th2.entries.length;ei++) if(th2.entries[ei].id===eid) EN = th2.entries[ei];
+    if(!EN) return;
+    writerSheet(niceDate(EN.date), "A closed thread stays open to writing forever.", EN.text, "Keep it",
+      function(txt){ EN.text = txt; save(); closeSheet(); paint(); });
+    return;
+  }
+  if(a === "closeTh"){ var th3 = findTh(t.getAttribute("data-i")); if(th3) closeThreadSheet(th3); return; }
+  if(a === "openTh"){
+    var th4 = findTh(t.getAttribute("data-i"));
+    if(th4){ th4.open = true; th4.closed = null; save(); paint(); }
+    return;
+  }
+
+  if(a === "backup"){ doBackup(); return; }
+  if(a === "restore"){ $("mfile").click(); return; }
+}
+
+/* ============================================================
+   START
+   ============================================================ */
+document.addEventListener("click", function(ev){
+  var m = ev.target.closest ? ev.target.closest("#modal .sheet") : null;
+  if(ev.target.id === "modal" || (ev.target.className === "modal")){ closeSheet(); return; }
+  onTap(ev);
+});
+$("nav").addEventListener("click", function(ev){
+  var b = ev.target.closest ? ev.target.closest("[data-t]") : null;
+  if(b) go(b.getAttribute("data-t"));
+});
+$("doorBtn").addEventListener("click", function(){
+  writerSheet("Write to GOD", "Dated, standing on its own. Nothing is required of it.",
+    "", "Keep it", function(txt){
+      S.letters.push({ id:uid(), date:todayISO(), text:txt });
+      save(); closeSheet(); paint();
+    });
+});
+$("lockNow").addEventListener("click", function(){ location.reload(); });
+$("corner").addEventListener("click", function(){ this.classList.toggle("clip"); });
+document.addEventListener("change", function(ev){
+  if(ev.target && ev.target.id === "mfile"){
+    var f = ev.target.files && ev.target.files[0];
+    if(f) readBackupFile(f);
+  }
+});
+
+(function boot(){
+  if(!window.crypto || !window.crypto.subtle || !crypto.subtle.deriveKey){ noCrypto(); return; }
+  if(!window.isSecureContext){ noCrypto(); return; }
+  var v = vault();
+  if(!v || !v.pin) gateSetPin(); else gateUnlock();
+  if("serviceWorker" in navigator){
+    window.addEventListener("load", function(){
+      navigator.serviceWorker.register("sw.js", { scope:"./" }).catch(function(){});
+    });
+  }
+})();
+</script>
+</body>
+</html>
